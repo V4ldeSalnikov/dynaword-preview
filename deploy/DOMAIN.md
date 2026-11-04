@@ -36,12 +36,15 @@ settings; a source `CNAME` file is not used by this deployment method.
 The existing Hugging Face Space, `V4ldeLund/danish-dynaword-api`, is intentionally
 paused. The migration does not resume it or change hardware, volumes or billing.
 Static overview and comparison pages work independently. Record browsing and
-search require the separate API and remain unavailable while it is paused.
+search are disabled in the website while the API is paused. Old record links
+show the comparison page and retain any selected language.
 
-For a static-only migration, manually dispatch **Validate and deploy GitHub
-Pages** with **verify_public_api** disabled. All fixture tests, container startup
-checks and the frontend build still run. Push deployments and normal manual
-deployments retain the live API check. Keep `VITE_API_BASE_URL` set to
+Normal pushes publish the static website without requiring a live API. All
+fixture tests, container startup checks and the frontend build still run.
+The record explorer is opt-in through the Actions variable
+`VITE_ENABLE_RECORD_EXPLORER=true`; enabling it requires `VITE_API_BASE_URL`
+and restores the live API check. Only enable it after the API is intentionally
+resumed and verified. Its URL is
 `https://v4ldelund-danish-dynaword-api.hf.space`.
 
 Before intentionally resuming the API, merge these three origins into the

@@ -27,6 +27,6 @@ export default function Compare({catalog,initialLanguage}: {catalog:Catalog;init
       <QualityComparison datasets={datasets} domain={domain}/>
       <details className="domain-values"><summary>View exact domain counts</summary><section className="domain-matrix"><div className="section-heading"><h2>Counts by domain</h2></div><div className="comparison-table-scroll"><table><thead><tr><th>Domain</th>{datasets.map(d=><th key={d.id}>{language(d)}</th>)}</tr></thead><tbody>{domains.filter(n=>!domain||n===domain).map(n=><tr key={n}><th scope="row"><button onClick={()=>{setDomain(domain===n?'':n);}}>{n}</button></th>{datasets.map(d=>{const group=d.domains.find(g=>g.name===n);return <td key={d.id}>{group?<><span>{format(group[measure])}</span><small>{percent(group[measure],d[measure])}</small></>:<span aria-label="No sources in this domain">—</span>}</td>;})}</tr>)}</tbody></table></div></section></details>
     </>}
-    <p className="comparison-footnote">Dataset licences vary by source. Follow a source’s documentation before reusing its texts. Comparisons use the releases above; record browsing covers all five languages. Danish search uses {catalog.indexed_danish.version}.</p>
+    <p className="comparison-footnote">Dataset licences vary by source. Follow a source’s documentation before reusing its texts. Comparisons use the releases above.</p>
   </main>;
 }

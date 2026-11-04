@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+      VITE_ENABLE_RECORD_EXPLORER: ${{ vars.VITE_ENABLE_RECORD_EXPLORER || 'false' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -55,32 +56,32 @@ jobs:
           trap cleanup EXIT
           docker run -d --name dynaword-api-smoke -p 127.0.0.1:18000:8000 -v "$RUNNER_TEMP/dynaword-data:/app/.cache:ro" dynaword-api:ci
           curl --fail --retry 10 --retry-all-errors --retry-delay 1 --retry-max-time 45 --max-time 10 http://127.0.0.1:18000/api/health
+      - name: Require API configuration when the record explorer is enabled
+        if: env.VITE_ENABLE_RECORD_EXPLORER == 'true' && env.VITE_API_BASE_URL == ''
+        run: |
+          echo 'Set VITE_API_BASE_URL before enabling the record explorer.' >&2
+          exit 1
       - name: Build the static frontend
         run: npm --prefix web run build
       - name: Verify the public full-corpus API
-        if: github.event_name != 'pull_request' && env.VITE_API_BASE_URL != '' && (github.event_name != 'workflow_dispatch' || inputs.verify_public_api)
+        if: github.event_name != 'pull_request' && env.VITE_ENABLE_RECORD_EXPLORER == 'true' && env.VITE_API_BASE_URL != '' && (github.event_name != 'workflow_dispatch' || inputs.verify_public_api)
         env:
           PAGES_ORIGIN: ${{ vars.PAGES_ORIGIN || format('https://{0}.github.io', github.repository_owner) }}
           PUBLIC_API_WAIT_SECONDS: 1200
         run: python scripts/check_public_api.py
       - name: Explain static-only publication
-        if: github.event_name == 'workflow_dispatch' && !inputs.verify_public_api
+        if: env.VITE_ENABLE_RECORD_EXPLORER != 'true' || (github.event_name == 'workflow_dispatch' && !inputs.verify_public_api)
         run: |
           echo '### Static website publication' >> "$GITHUB_STEP_SUMMARY"
-          echo 'The operator explicitly skipped the live API check. Tests and the production build still run. The API URL is preserved, but browsing and search remain unavailable while the API is paused.' >> "$GITHUB_STEP_SUMMARY"
-      - name: Explain pending API configuration
-        if: env.VITE_API_BASE_URL == ''
-        run: |
-          echo '### Public API required before publishing' >> "$GITHUB_STEP_SUMMARY"
-          echo 'The source and frontend build are ready. GitHub Pages cannot run the corpus API. Set the repository variable `VITE_API_BASE_URL` to the HTTPS API origin, then run this workflow again. See `deploy/README.md`.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The record explorer is disabled or the operator explicitly skipped the live API check. Fixture tests and the production build still run. The overview and comparisons do not require a live API.' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload Pages build
-        if: github.event_name != 'pull_request' && env.VITE_API_BASE_URL != ''
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: web/dist
 
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.VITE_API_BASE_URL != ''
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: validate
     runs-on: ubuntu-latest
     permissions:
