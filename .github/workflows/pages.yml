@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      verify_public_api:
+        description: Verify the live API (disable only for a static migration while the API is intentionally paused)
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -53,11 +58,16 @@ jobs:
       - name: Build the static frontend
         run: npm --prefix web run build
       - name: Verify the public full-corpus API
-        if: github.event_name != 'pull_request' && env.VITE_API_BASE_URL != ''
+        if: github.event_name != 'pull_request' && env.VITE_API_BASE_URL != '' && (github.event_name != 'workflow_dispatch' || inputs.verify_public_api)
         env:
-          PAGES_ORIGIN: https://${{ github.repository_owner }}.github.io
+          PAGES_ORIGIN: ${{ vars.PAGES_ORIGIN || format('https://{0}.github.io', github.repository_owner) }}
           PUBLIC_API_WAIT_SECONDS: 1200
         run: python scripts/check_public_api.py
+      - name: Explain static-only publication
+        if: github.event_name == 'workflow_dispatch' && !inputs.verify_public_api
+        run: |
+          echo '### Static website publication' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The operator explicitly skipped the live API check. Tests and the production build still run. The API URL is preserved, but browsing and search remain unavailable while the API is paused.' >> "$GITHUB_STEP_SUMMARY"
       - name: Explain pending API configuration
         if: env.VITE_API_BASE_URL == ''
         run: |

@@ -6,7 +6,7 @@ Danish corpus; there is no Space iframe or Gradio frontend in the website.
 - Space: https://huggingface.co/spaces/V4ldeLund/danish-dynaword-api
 - API origin: `https://v4ldelund-danish-dynaword-api.hf.space`
 - Artifact repository: https://huggingface.co/datasets/V4ldeLund/danish-dynaword-explorer-index
-- Website: https://v4ldesalnikov.github.io/scandinavian-dynaword-website/
+- Website: https://danish-foundation-models.github.io/scandinavian-dynaword-website/
 
 ## Hardware and storage
 
@@ -62,7 +62,7 @@ HF references: [hardware](https://huggingface.co/docs/hub/spaces-gpus),
 
    ```sh
    VITE_API_BASE_URL=https://v4ldelund-danish-dynaword-api.hf.space \
-   PAGES_ORIGIN=https://v4ldesalnikov.github.io \
+   PAGES_ORIGIN=https://dynaword.foundationmodels.dk \
    python3 scripts/check_public_api.py
    ```
 

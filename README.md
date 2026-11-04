@@ -1,6 +1,6 @@
 # Scandinavian Dynaword explorer
 
-[Public website](https://v4ldesalnikov.github.io/scandinavian-dynaword-website/) · [MVP plan](MVP.md) · [Wishlist](WISHLIST.md)
+[Public website](https://danish-foundation-models.github.io/scandinavian-dynaword-website/) · [Custom domain setup](deploy/DOMAIN.md) · [MVP plan](MVP.md) · [Wishlist](WISHLIST.md)
 
 An interactive overview of Danish, Norwegian, Swedish, Icelandic and Faroese Dynaword, with full-corpus browsing for all five languages and keyword/semantic search enabled per completed language index. GitHub Pages serves the static frontend; an API-only Hugging Face Space serves search and Nordic record exploration. The overview and comparison pages need no backend connection.
 

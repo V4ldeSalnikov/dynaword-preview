@@ -76,8 +76,8 @@ viewer: false
 
 # Danish Dynaword explorer serving indexes
 
-Immutable runtime artifacts for [the explorer](https://v4ldesalnikov.github.io/scandinavian-dynaword-website/).
-Source code and build instructions: https://github.com/V4ldeSalnikov/scandinavian-dynaword-website.
+Immutable runtime artifacts for [the explorer](https://danish-foundation-models.github.io/scandinavian-dynaword-website/).
+Source code and build instructions: https://github.com/danish-foundation-models/scandinavian-dynaword-website.
 
 Source: [{manifest['dataset']}](https://huggingface.co/datasets/{manifest['dataset']}/tree/{manifest['revision']}).
 Pinned source revision: `{manifest['revision']}`. Coverage: {manifest['records']:,} records across {len(manifest['sources'])} sources.

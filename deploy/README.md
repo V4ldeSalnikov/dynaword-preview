@@ -1,7 +1,7 @@
 # GitHub Pages and the corpus API
 
-The source repository is [V4ldeSalnikov/scandinavian-dynaword-website](https://github.com/V4ldeSalnikov/scandinavian-dynaword-website).
-The live site is [Dynaword](https://v4ldesalnikov.github.io/scandinavian-dynaword-website/). The API runs at [danish-dynaword-api](https://v4ldelund-danish-dynaword-api.hf.space/docs).
+The source repository is [danish-foundation-models/scandinavian-dynaword-website](https://github.com/danish-foundation-models/scandinavian-dynaword-website).
+The live site is [Dynaword](https://danish-foundation-models.github.io/scandinavian-dynaword-website/). The API runs at [danish-dynaword-api](https://v4ldelund-danish-dynaword-api.hf.space/docs).
 
 Pages hosts the static React frontend. It cannot run FastAPI, DuckDB, Tantivy, or the semantic-vector searches. Public deployment therefore needs a separate HTTPS API host with the complete prepared indexes. A frontend without that host would not meet the full-corpus requirement.
 
@@ -32,7 +32,7 @@ Verify the public service, including browser access from Pages:
 
 ```sh
 VITE_API_BASE_URL=https://your-api-hostname \
-PAGES_ORIGIN=https://v4ldesalnikov.github.io \
+PAGES_ORIGIN=https://dynaword.foundationmodels.dk \
 python3 scripts/check_public_api.py
 ```
 

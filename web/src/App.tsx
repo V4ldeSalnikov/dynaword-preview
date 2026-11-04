@@ -25,6 +25,6 @@ export default function App() {
       {view==='records'&&selectedCorpus&&!isDanish&&<Suspense fallback={<div className="site-loading">Opening the record explorer…</div>}><RemoteExplorer key={selectedCorpus.id} corpus={selectedCorpus}/></Suspense>}
       {visitedRecords&&isDanish&&<div hidden={view!=='records'||!isDanish}><Suspense fallback={<div className="site-loading"><LoaderCircle className="spin" size={20}/>Opening the record explorer…</div>}><Explorer active={view==='records'&&isDanish}/></Suspense></div>}
     </div>
-    <footer className="site-footer"><span>Scandinavian Dynaword</span><div><a href="https://github.com/V4ldeSalnikov/scandinavian-dynaword-website/blob/main/LICENSE" target="_blank" rel="noreferrer">Website code · MIT licence</a><span>Corpus texts retain their source licences.</span></div></footer>
+    <footer className="site-footer"><span>Scandinavian Dynaword</span><div><a href="https://github.com/danish-foundation-models/scandinavian-dynaword-website/blob/main/LICENSE" target="_blank" rel="noreferrer">Website code · MIT licence</a><span>Corpus texts retain their source licences.</span></div></footer>
   </div>;
 }

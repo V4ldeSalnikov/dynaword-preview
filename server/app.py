@@ -64,7 +64,7 @@ def manifest():
 
 @app.get('/')
 def service_info():
-    return {'service': 'Scandinavian Dynaword API', 'website': 'https://v4ldesalnikov.github.io/scandinavian-dynaword-website/', 'docs': '/docs', 'health': '/api/health'}
+    return {'service': 'Scandinavian Dynaword API', 'website': 'https://danish-foundation-models.github.io/scandinavian-dynaword-website/', 'docs': '/docs', 'health': '/api/health'}
 
 
 @contextmanager

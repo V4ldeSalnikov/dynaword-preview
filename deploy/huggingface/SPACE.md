@@ -22,7 +22,7 @@ tags:
 
 # Scandinavian Dynaword API
 
-The interactive website is on **[GitHub Pages](https://v4ldesalnikov.github.io/scandinavian-dynaword-website/)**.
+The interactive website is on **[GitHub Pages](https://danish-foundation-models.github.io/scandinavian-dynaword-website/)**.
 This Docker Space only serves its data API. [API documentation](/docs).
 
 The API covers all 7,399,685 Danish Dynaword records: paginated browsing,
@@ -32,7 +32,7 @@ using published release statistics. Complete record browsing also covers Norwegi
 Topics are deferred from the current website.
 
 Source, reproduction instructions and deployment files:
-https://github.com/V4ldeSalnikov/scandinavian-dynaword-website.
+https://github.com/danish-foundation-models/scandinavian-dynaword-website.
 `runtime-source.json` and `annotations-source.json` pin the serving artifacts to an immutable Hub commit.
 Checksums are verified while building the image. Original texts retain their
 source licenses; derived fastText vectors use CC BY-SA 3.0. See the index

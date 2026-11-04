@@ -1,7 +1,7 @@
 FROM python:3.11-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOME=/home/dynaword \
-    ALLOWED_ORIGINS=https://v4ldesalnikov.github.io \
+    ALLOWED_ORIGINS=https://v4ldesalnikov.github.io,https://danish-foundation-models.github.io,https://dynaword.foundationmodels.dk \
     DYNAWORD_SEARCH_ROOT=/search-index DYNAWORD_MODEL_ROOT=/search-model \
     DYNAWORD_SEARCH_THREADS=4 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=4 RAYON_NUM_THREADS=4
 WORKDIR /app

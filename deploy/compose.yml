@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      ALLOWED_ORIGINS: ${PAGES_ORIGIN:-https://v4ldesalnikov.github.io}
+      ALLOWED_ORIGINS: ${PAGES_ORIGIN:-https://dynaword.foundationmodels.dk}
     volumes:
       - type: bind
         source: ${DYNAWORD_DATA_DIR:?Set DYNAWORD_DATA_DIR to the prepared corpus directory}
