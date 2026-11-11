@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:chat": "node --experimental-strip-types --test tests/chat-data.test.ts",
+    "test:chat": "node --experimental-strip-types --test tests/chat-*.test.ts",
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "tsc --noEmit && vite build",
     "start": "vite preview --host 127.0.0.1 --port 4173",

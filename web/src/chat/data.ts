@@ -1,7 +1,7 @@
 import type { Catalog, Corpus } from "../catalog";
 
-export const MODEL_ID = "LiquidAI/LFM2.5-1.2B-Instruct-ONNX";
-export const MODEL_REVISION = "10f72e70abf67ac0fd7ebf15bc5854726891d864";
+export const MODEL_ID = "LiquidAI/LFM3-1.7B-ONNX";
+export const MODEL_REVISION = "57c125dfa29f2d39157e280b1d1f7480b8736d8d";
 const views = ["size", "domains", "sources", "annotations", "coverage", "about", "help"] as const;
 const fields = ["content_quality", "educational_value", "pii_presence", "content_safety", "content_integrity", "content_ratio", "content_length", "information_density", "reasoning_indicators"];
 const topics = ["dynaword", "tokens", "records", "annotations", "licensing", "search"];
@@ -13,6 +13,7 @@ export type Plan = {
 export type Answer = {
   title: string; text: string; notes: string[]; rows: {label: string; value: number | null}[];
   unit: string; format: "chart" | "text"; sources: {label: string; url: string}[];
+  generated?: boolean;
 };
 export const pretty = (s: string) => s.replaceAll("_", " ").replace(/^./, c => c.toUpperCase());
 const name = (d: Corpus) => d.name.replace(" Dynaword", "");
@@ -32,7 +33,7 @@ export function parsePlan(output: string, catalog: Catalog, question = "", previ
   const explanation=explanationTopic(question);
   if(explanation)return parsePlan(JSON.stringify({view:'about',languages:[],topic:explanation}),catalog);
   const start = output.indexOf("{"), end = output.lastIndexOf("}");
-  if (start < 0 || end < start) throw Error("I could not understand that request. Try naming a language and a measure, such as ‘Plot Danish tokens by domain’.");
+  if (start < 0 || end < start) throw Error("I could not prepare that data request. Try naming a language and a measure, such as ‘Plot Danish tokens by domain’.");
   const raw = JSON.parse(output.slice(start, end + 1));
   const p = {...raw};
   // Preserve explicit selections instead of letting a small model omit or change them.
@@ -165,9 +166,9 @@ export function answerPlan(plan: Plan, catalog: Catalog): Answer {
   return answer;
 }
 
-export function plannerPrompt(catalog: Catalog): string {
+export function statisticsSchema(catalog: Catalog): string {
   const domains=[...new Set(catalog.datasets.flatMap(d=>d.domains.map(g=>g.name)))];
-  return `Extract the user's request about Dynaword statistics. Return one JSON object and nothing else. Do not answer the question or invent numbers.
+  return `For a supported statistics question, return <data> followed by one JSON object and </data>. Do not invent numbers or add prose to a data request.
 Required keys:
 "measure": what to count. Choose exactly one of tokens, records, source_count, annotation_coverage, ${fields.join(", ")}, explanation, unsupported.
 "group_by": choose language, domain, source, or category. Annotation labels use category. Comparing whole corpora uses language.
@@ -179,8 +180,19 @@ Optional keys:
 "domain": requested domain, otherwise all. Valid names: ${domains.join(", ")}.
 "category": requested annotation label (e.g. good or excellent), otherwise all.
 "topic": for explanation only, choose dynaword, tokens, records, annotations, licensing or search.
-Meaning: text volume is tokens; documents or rows are records; quality means content_quality; educational value means educational_value; how much data is annotated means annotation_coverage. Questions asking what something means use explanation. Historical growth, document contents, word frequencies, model performance and unrelated questions use unsupported.
+Meaning: text volume is tokens; documents or rows are records; quality means content_quality; educational value means educational_value; how much data is annotated means annotation_coverage. Definitions use explanation. Historical growth, individual document contents, word frequencies and model performance use unsupported.
 Follow-ups retain the previous selection, changing only what was requested. Return the complete JSON request.`;
+}
+
+export function plannerPrompt(catalog:Catalog):string {
+  return `Translate the user's statistics question into a request for an available calculation tool. Output ONLY <data>{JSON}</data>. The tool already has the data; you do not need to retrieve it or know the counts. Do not explain, reason aloud, ask permission, or write a text answer.
+${statisticsSchema(catalog)}
+Examples:
+User: Plot Danish content quality as percentages
+Assistant: <data>{"measure":"content_quality","group_by":"category","languages":["danish"],"as_percent":true,"chart":true}</data>
+User: How many tokens does each language have?
+Assistant: <data>{"measure":"tokens","group_by":"language","languages":[],"as_percent":false,"chart":false}</data>
+Return the requested JSON now.`;
 }
 
 export function plannerRequest(plan:Plan) {

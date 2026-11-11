@@ -1,16 +1,18 @@
-import { AutoModelForCausalLM, AutoTokenizer, env, InterruptableStoppingCriteria } from "@huggingface/transformers";
-import { MODEL_ID, MODEL_REVISION, plannerRequest } from "./data";
+import { AutoModelForCausalLM, AutoTokenizer, env, Tensor } from "@huggingface/transformers";
+import { MODEL_ID, MODEL_REVISION } from "./data";
+import { conversationMessages } from "./knowledge";
+import { generateTokens } from "./generation";
 
 env.allowLocalModels = false;
 env.backends.onnx.wasm!.numThreads = 1;
 let tokenizer: Awaited<ReturnType<typeof AutoTokenizer.from_pretrained>> | null = null;
 let model: Awaited<ReturnType<typeof AutoModelForCausalLM.from_pretrained>> | null = null;
 let busy = false;
-const stopping = new InterruptableStoppingCriteria();
+let stopped = false;
 const send = (data: unknown) => self.postMessage(data);
 
 self.addEventListener("message", async ({data}) => {
-  if(data.type === "stop") { stopping.interrupt(); return; }
+  if(data.type === "stop") { stopped=true; return; }
   if(busy) return;
   busy=true;
   try {
@@ -25,16 +27,20 @@ self.addEventListener("message", async ({data}) => {
       send({type:"ready"});
     } else if(data.type === "ask") {
       if(!model || !tokenizer) throw Error("Load the local model first.");
-      stopping.reset();
-      const messages=[{role:"system",content:data.system},...(data.previous ? [{role:"user",content:data.previous.question},{role:"assistant",content:JSON.stringify(plannerRequest(data.previous.plan))}] : []),{role:"user",content:data.question}];
-      const inputs=tokenizer.apply_chat_template(messages,{add_generation_prompt:true,return_dict:true});
-      const output=await model.generate({...inputs,max_new_tokens:220,do_sample:false,stopping_criteria:[stopping]});
-      const sequences=output as unknown as {slice:(...indices:unknown[])=>unknown};
-      const generated=sequences.slice(null,[(inputs as any).input_ids.dims[1],null]);
-      const text=tokenizer.batch_decode(generated as any,{skip_special_tokens:true})[0];
-      send({type:"answer",id:data.id,output:text});
+      stopped=false;
+      const messages=[{role:"system",content:data.system},...conversationMessages(data.question,data.history||[],data.previous)];
+      // The tokenizer forwards extra template arguments; its options type omits them.
+      const templateOptions={add_generation_prompt:true,enable_thinking:false,return_dict:true} as const;
+      const inputs=tokenizer.apply_chat_template(messages,templateOptions) as {input_ids:Tensor};
+      const result=await generateTokens(model,Array.from(inputs.input_ids.data,BigInt),{
+        eos:124900,maxTokens:384,stopped:()=>stopped,
+        progress:(stage,tokens)=>send({type:"stage",id:data.id,stage,tokens}),
+      });
+      const text=tokenizer.decode(result.tokens,{skip_special_tokens:false});
+      send({type:"answer",id:data.id,output:text,truncated:result.truncated});
     }
   } catch(error) {
+    console.error("Local Dynaword model:",error);
     send({type:"error",id:data.id,message:error instanceof Error?error.message:String(error)});
   } finally {busy=false;}
 });
