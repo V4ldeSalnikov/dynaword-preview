@@ -57,6 +57,10 @@ The frontend uses relative asset paths, so it works under the repository subdire
 
 ## Public verification
 
+### Browser assistant
+
+`#ask` runs a pinned Liquid LFM2.5-1.2B-Instruct model through Transformers.js in a Web Worker. Loading is opt-in and requires WebGPU with `shader-f16`. No inference server, API key, or extra repository variable is needed. Questions and conversation state stay in the tab. Hugging Face supplies model files; the browser caches them after the first download. The model selects a validated data request; counts, percentages and plots are computed from `web/public/data/corpora.json`. This does not query the semantic-search API or read individual documents. Run `npm --prefix web run test:chat` for the calculation and missing-data checks.
+
 The GitHub deployment succeeded, and the public API was checked against all 7,399,685 records, all 50 sources, the final corpus page, full-text search, full-vector semantic retrieval, topic filters, original-text reading, and browser access from the Pages origin. Browser checks cover desktop/mobile layouts, linked filters, chart selection, both searches, map controls, and point-to-reader access.
 
 Initial single-client checks on the running Space measured about 0.8 seconds for a full-text query, 13.3 seconds for an uncached full-corpus semantic query, and 2.8 seconds for the topic map and distribution. These are observations, not a load-test guarantee. CPU Basic can sleep after inactivity; the first container startup took several minutes with the roughly 30 GB serving image. A real sleep/wake cycle has not been measured. The frontend retries while the API is starting.

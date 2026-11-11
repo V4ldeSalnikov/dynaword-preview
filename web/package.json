@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:chat": "node --experimental-strip-types --test tests/chat-data.test.ts",
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "tsc --noEmit && vite build",
     "start": "vite preview --host 127.0.0.1 --port 4173",
@@ -11,6 +12,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@huggingface/transformers": "4.3.2",
     "echarts": "6.1.0",
     "lucide-react": "1.41.0",
     "react": "19.2.6",

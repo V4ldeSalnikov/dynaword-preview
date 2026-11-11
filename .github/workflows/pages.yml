@@ -45,6 +45,8 @@ jobs:
           python -m pip install -r server/requirements-dev.txt
       - name: Test API behavior on isolated fixtures
         run: python -m unittest discover -s server -v
+      - name: Verify chat calculations and missing-data handling
+        run: npm --prefix web run test:chat
       - name: Build the API container
         run: docker build --tag dynaword-api:ci .
       - name: Check API startup with a read-only data mount

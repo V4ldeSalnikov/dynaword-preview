@@ -9,7 +9,7 @@ export default function Home({catalog}: {catalog:Catalog}) {
       <p className="section-label">SCANDINAVIAN DYNAWORD</p>
       <h1>Open language data.<br/>Continuously developed.</h1>
       <p className="intro-copy">Danish, Swedish, Norwegian, Icelandic and Faroese text collections, brought together through a shared approach to documentation, licensing and ongoing improvement.</p>
-      <div className="intro-actions"><a className="button" href="#compare">Compare the corpora <ArrowRight size={16}/></a></div>
+      <div className="intro-actions"><a className="button" href="#compare">Compare the corpora <ArrowRight size={16}/></a><a className="quiet-link" href="#ask">Ask a question <ArrowRight size={15}/></a></div>
       <dl className="headline-numbers"><div><dt>Languages</dt><dd>5</dd></div><div><dt>Tokens</dt><dd>{compact(tokens)}</dd></div><div><dt>Source collections</dt><dd>{format(sources)}</dd></div></dl>
     </section>
     <section className="corpus-directory" aria-labelledby="collections-heading">

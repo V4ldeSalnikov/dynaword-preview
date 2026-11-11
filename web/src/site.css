@@ -14,3 +14,5 @@ body{background:#fff;color:var(--ink)}button,input,select{font:inherit}a:hover{c
 .country-flag{width:26px;height:19px;flex-shrink:0;border:1px solid #d7dce2;border-radius:2px;overflow:hidden}.dataset-selector>.country-flag{margin:0}.statistics-unavailable{padding:28px 22px;color:var(--muted);font-size:12px;line-height:1.7}.source-card h3{overflow-wrap:anywhere}.remote-explorer .source-card>div{margin-top:20px}.remote-explorer .modal:not(.reader-modal){padding:28px}.remote-explorer .modal:not(.reader-modal) .modal-header{padding:0 0 20px;margin-bottom:20px}.explorer-tabs{overflow-x:auto;flex-shrink:0}.explorer-tabs button{white-space:nowrap}
 
 .explorer .record-table td:last-child{padding-left:4px;padding-right:8px;text-overflow:clip}
+
+@media(max-width:760px){.site-header nav{gap:18px;overflow-x:auto;white-space:nowrap}.site-header nav a{font-size:11px;flex-shrink:0}}

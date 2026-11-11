@@ -7,7 +7,7 @@ test('overview and all five comparisons work without the data service', async ({
   await page.goto('./');
   await expect(page.locator('.headline-numbers')).toContainText('63.45B');
   await expect(page.locator('.directory-table tbody tr')).toHaveCount(5);
-  await expect(page.locator('.site-header nav a')).toHaveCount(process.env.VITE_ENABLE_RECORD_EXPLORER === 'true' ? 3 : 2);
+  await expect(page.locator('.site-header nav a')).toHaveCount(process.env.VITE_ENABLE_RECORD_EXPLORER === 'true' ? 4 : 3);
   await expect(page.locator('.site-footer')).toContainText('MIT licence');
   await page.getByRole('link',{name:'Compare corpora',exact:true}).click();
   await expect(page.locator('.comparison-chart .comparison-bar-row')).toHaveCount(5);

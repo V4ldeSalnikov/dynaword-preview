@@ -2,6 +2,6 @@
 
 A website presenting the Danish, Norwegian, Swedish, Icelandic and Faroese Dynaword text collections.
 
-Compare their sizes, sources, domains and available machine-generated annotations. Search Danish texts by keywords or meaning.
+Compare their sizes, sources, domains and available machine-generated annotations. Search Danish texts by keywords or meaning, or ask questions and create charts with a small AI model running in your browser.
 
 [Visit the website](https://v4ldesalnikov.github.io/dynaword-preview/)
