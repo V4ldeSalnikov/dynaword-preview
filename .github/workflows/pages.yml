@@ -24,6 +24,7 @@ jobs:
     env:
       VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
       VITE_ENABLE_RECORD_EXPLORER: ${{ vars.VITE_ENABLE_RECORD_EXPLORER || 'false' }}
+      VITE_ENABLE_REMOTE_EXPLORERS: ${{ vars.VITE_ENABLE_REMOTE_EXPLORERS || 'true' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -63,7 +64,7 @@ jobs:
           exit 1
       - name: Build the static frontend
         run: npm --prefix web run build
-      - name: Verify the public full-corpus API
+      - name: Verify the enabled full-corpus APIs
         if: github.event_name != 'pull_request' && env.VITE_ENABLE_RECORD_EXPLORER == 'true' && env.VITE_API_BASE_URL != '' && (github.event_name != 'workflow_dispatch' || inputs.verify_public_api)
         env:
           PAGES_ORIGIN: ${{ vars.PAGES_ORIGIN || format('https://{0}.github.io', github.repository_owner) }}

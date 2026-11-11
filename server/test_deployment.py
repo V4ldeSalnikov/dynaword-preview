@@ -28,7 +28,7 @@ class DeploymentTests(unittest.TestCase):
             if corpus['annotation_distributions']:
                 self.responses[path+urlencode({'limit':1,'filters':json.dumps({'annotations':{'educational_value':'high'}})})]={'total':corpus['annotation_distributions']['educational_value']['high'],'rows':[{'id':'fixture'}]}
 
-    def run_check(self, bodies=None, cors=True):
+    def run_check(self, bodies=None, cors=True, include_remote=True):
         bodies = bodies or self.responses
         session = MagicMock()
         session.__enter__.return_value = session
@@ -39,10 +39,20 @@ class DeploymentTests(unittest.TestCase):
             return result
         session.get.side_effect = response
         with patch('scripts.check_public_api.requests.Session', return_value=session):
-            check_public_api('https://api.example.org', self.origin)
+            check_public_api('https://api.example.org', self.origin, include_remote=include_remote)
 
     def test_complete_public_api_can_be_published(self):
         self.run_check()
+
+    def test_danish_only_publication_does_not_require_remote_services(self):
+        bodies={key:value for key,value in self.responses.items() if not key.startswith('corpora/')}
+        self.run_check(bodies, include_remote=False)
+
+    def test_danish_only_publication_still_requires_complete_search(self):
+        bodies=deepcopy(self.responses)
+        bodies['manifest']['search']['semantic_index']['records_processed']=3
+        with self.assertRaisesRegex(ValueError, 'complete corpus'):
+            self.run_check(bodies, include_remote=False)
 
     def test_missing_browser_access_blocks_publication(self):
         with self.assertRaisesRegex(ValueError, 'ALLOWED_ORIGINS'):

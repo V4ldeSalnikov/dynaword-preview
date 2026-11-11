@@ -8,7 +8,7 @@ from urllib.parse import urlparse, urlencode
 import requests
 
 
-def check_public_api(api_url, pages_origin):
+def check_public_api(api_url, pages_origin, include_remote=True):
     url = api_url.rstrip('/')
     parsed = urlparse(url)
     if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment or parsed.path not in ('', '/'):
@@ -42,7 +42,7 @@ def check_public_api(api_url, pages_origin):
             raise ValueError('Public corpus totals do not match the manifest.')
         catalog=json.loads((Path(__file__).resolve().parents[1]/'web/public/data/corpora.json').read_text())
         for corpus in catalog['datasets']:
-            if corpus['id']=='danish':continue
+            if corpus['id']=='danish' or not include_remote:continue
             selection=get('corpora/'+corpus['id']+'/stats')
             if selection['totals']['records']!=corpus['records'] or selection['totals']['tokens']!=corpus['tokens']:
                 raise ValueError('The '+corpus['id']+' selection statistics do not cover the complete release.')
@@ -54,7 +54,8 @@ def check_public_api(api_url, pages_origin):
                 page=get(path+urlencode({'limit':1,'filters':json.dumps({'annotations':{'educational_value':'high'}})}))
                 if page.get('total')!=corpus['annotation_distributions']['educational_value']['high'] or len(page.get('rows',[]))!=1:
                     raise ValueError('The '+corpus['id']+' annotation index is not ready.')
-    print(f"Public API ready: all five explorers; Danish {records:,} records, {len(manifest['sources'])} sources, both search modes.")
+    scope='all five explorers' if include_remote else 'Danish explorer'
+    print(f"Public API ready: {scope}; Danish {records:,} records, {len(manifest['sources'])} sources, both search modes.")
 
 
 if __name__ == '__main__':
@@ -62,7 +63,7 @@ if __name__ == '__main__':
     waiting=False
     while True:
         try:
-            check_public_api(os.environ.get('VITE_API_BASE_URL', ''), os.environ.get('PAGES_ORIGIN', 'https://v4ldesalnikov.github.io'))
+            check_public_api(os.environ.get('VITE_API_BASE_URL', ''), os.environ.get('PAGES_ORIGIN', 'https://v4ldesalnikov.github.io'), include_remote=os.environ.get('VITE_ENABLE_REMOTE_EXPLORERS')!='false')
             break
         except requests.RequestException as error:
             if time.monotonic()>=deadline:

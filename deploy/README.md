@@ -43,11 +43,15 @@ Under **Settings → Secrets and variables → Actions → Variables**, set the 
 
 ```text
 VITE_API_BASE_URL=https://your-api-hostname
+VITE_ENABLE_RECORD_EXPLORER=true
+VITE_ENABLE_REMOTE_EXPLORERS=false
 ```
+
+These settings enable Danish keyword and semantic search. Set `VITE_ENABLE_REMOTE_EXPLORERS=true` only when the other four language services are ready; the deployment check then verifies them too. With remote explorers disabled, their record links open the corresponding comparison page. All five languages remain available in comparisons. Leaving `VITE_ENABLE_RECORD_EXPLORER` unset keeps the website static.
 
 This value is a public origin, not a secret. Do not put API credentials in Vite variables; they are embedded in the public JavaScript.
 
-Run **Actions → Validate and deploy GitHub Pages → Run workflow**, or push to `main`. The workflow checks the API fixtures, builds the frontend, verifies public corpus/search/topic readiness and CORS, and publishes `web/dist/` using GitHub's Pages actions. Pull requests run the tests and build without deploying. When the API URL is unset, validation runs and deployment is explicitly skipped; the site is not published with a broken connection.
+Run **Actions → Validate and deploy GitHub Pages → Run workflow**, or push to `main`. The workflow tests the API, builds the frontend, verifies the enabled corpus APIs and CORS, and publishes `web/dist/`. Pull requests run the tests and build without deploying. Enabling the record explorer requires an API URL and successful live checks.
 
 The frontend uses relative asset paths, so it works under the repository subdirectory. Its data requests use the separately configured API origin. The local Vite proxy continues to work when the variable is unset.
 

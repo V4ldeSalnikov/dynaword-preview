@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests",
   testMatch: process.env.VITE_ENABLE_RECORD_EXPLORER === "true" ? "**/*.spec.ts" : "**/comparison.spec.ts",
+  testIgnore: process.env.VITE_ENABLE_REMOTE_EXPLORERS === "false" ? "**/multilingual.spec.ts" : [],
   timeout: 90000,
   expect: { timeout: 20000 },
   workers: 1,
