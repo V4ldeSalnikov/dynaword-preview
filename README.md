@@ -4,4 +4,4 @@ A website presenting the Danish, Norwegian, Swedish, Icelandic and Faroese Dynaw
 
 Compare their sizes, sources, domains and available machine-generated annotations.
 
-[Visit the website](https://danish-foundation-models.github.io/scandinavian-dynaword-website/)
+[Visit the website](https://v4ldesalnikov.github.io/dynaword-preview/)
